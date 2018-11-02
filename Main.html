@@ -68,13 +68,27 @@
   
 	
   <script type="text/javascript">
-	//We look for a keycode when pressing a key  	
-  	window.addEventListener('keydown', function(e){
+	function playSound(e){
   		//Check if keycode matches one of our buttons
-  		const audio = document.querySelector(`audio[data-key="${e.keyCode}"]`);
-  		if(!audio) return;   		
+  		const audio = document.querySelector(`audio[data-key="${e.keyCode}"]`); //We obtain the audio
+  		const key = document.querySelector(`.key[data-key="${e.keyCode}"]`); //We obtain the key
+  		if (!audio) return; //If audio isn't there then don't execute the function
+  		audio.currentTime = 0; // Rewind audio to start	so we can press it indefinitely
   		audio.play();
-  	})
+  		key.classList.add('playing');
+  	};  	
+
+  	function removeTransition(e) {
+  		if(e.propertyName !== 'transform') return; 
+  		this.classList.remove('playing');
+  	}; 	
+
+  	const keys = document.querySelectorAll('.key');
+  	//We add to each key an Event that calls 'removeTransition' at the end of each transition
+  	keys.forEach(key => key.addEventListener('transitionend', removeTransition)); 
+  	//We add to the whole window an Event that listens to keypresses
+  	window.addEventListener('keydown', playSound);
+
   </script>
 
   </body>
